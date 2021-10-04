@@ -9,8 +9,8 @@
 ```
 pip install -r requirements.txt
 ```
-put your apiKey in config.json
-I didn't set up the region yet , so you can configure it in config.json
+set up your apiKey in config.json and the region if needed
+
 
 
 
