@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+    <style>
+
+    </style>
+{% endblock %}
+{% csrf_token %}
+{% block content %}
+    <div>
+        <div id="myModal" class="modal bd-example-modal-lg" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document" style="max-width: 80%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Players Encountered</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        {% if datas %}
+
+                            {% for idx, summonerName, data in  datas %}
+                                <div class="d-flex my-2">
+                                    <div style="width: 30%">{{ summonerName }}</div>
+                                    <div style="width: 30%">{{ data.found }} Times</div>
+                                    <div style="width: 30%"><button class="btn btn-primary showHide" data-id="{{ idx }}">show</button></div>
+                                </div>
+                                <table class="table table-striped my-5" data-id="{{ idx }}">
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th>lastSeen</th>
+                                        <th>mode</th>
+                                        <th>date</th>
+                                        <th>win</th>
+                                        <th>vs</th>
+                                        <th>myScore</th>
+                                        <th>myChamp</th>
+                                        <th>otherScore</th>
+                                        <th>otherChamp</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for match in  data.matches %}
+                                        <tr>
+                                            <td>{{ match.lastSeen }}</td>
+                                            <td>{{ match.mode }}</td>
+                                            <td>{{ match.time }}</td>
+                                            <td>
+                                                {% if match.win %}
+                                                    <span class="badge badge-success">Won</span>
+                                                {% else %}
+                                                    <span class="badge badge-danger">Lose</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if not match.vs %}
+                                                    <span class="badge badge-success">Teammate</span>
+                                                {% else %}
+                                                    <span class="badge badge-danger">Enemy</span>
+                                                {% endif %}
+
+
+                                            </td>
+                                            <td>{{ match.myScore }}</td>
+                                            <td>{{ match.myChamp }}</td>
+                                            <td>{{ match.score }}</td>
+                                            <td>{{ match.champ }}</td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+
+                                </table>
+                            {% endfor %}
+
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('#myModal').modal('show')
+        $('table').hide()
+        $('.showHide').click(function (idx) {
+            let target = $(this)
+            let table = target.parent().parent().next()
+            if (table.is(":visible")) {
+                target.text('show')
+            } else {
+                target.text('hide')
+            }
+           table.toggle()
+        })
+
+
+    </script>
+    <div class=""
+         style="width:30%;margin-left: 20%;margin-top: 11%;background: white;border-radius: 25px;padding: 20px">
+        <Form method="post" action="{% url 'homePost' %}" style="">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="summonerName">Summoner Name</label>
+                <input class="form-control" id="summonerName" name="summonerName" type="text">
+
+            </div>
+            <div class="w-100 d-flex justify-content-center">
+                <button class="btn btn-success mt-5 w-50 " type="submit">Search</button>
+            </div>
+        </Form>
+
+    </div>
+
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}
