@@ -1,5 +1,6 @@
 {
   "apiKey": "myApiKey",
   "myRegion": "euw1",
-  "region": "EUROPE"
+  "region": "EUROPE",
+  "max": 100
 }
