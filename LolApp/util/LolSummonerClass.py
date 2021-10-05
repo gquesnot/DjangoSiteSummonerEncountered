@@ -25,8 +25,12 @@ class LolSummoner():
                 try:
                     self.lol_watcher = LolWatcher(self.apiKey, default_match_v5=True)
                     self.summoner = self.createOrGetSummoner(summonerName)
-                    self.matches = Match.objects.filter(participantStats__summoner=self.summoner)
-                    self.matchIds = set([match.matchId for match in self.matches])
+                    try:
+                        self.matches = Match.objects.filter(participantStats__summoner=self.summoner)
+                        self.matchIds = set([match.matchId for match in self.matches])
+                    except:
+                        self.matches = []
+                        self.matchIds = set()
                     self.confOk = True
                 except:
                     self.confOk = False
@@ -34,15 +38,19 @@ class LolSummoner():
         except:
             self.confOk = False
 
-    def createOrGetSummoner(self, summonerName):
-        summ = self.lol_watcher.summoner.by_name(self.myRegion, summonerName)
-        summoner = Summoner.objects.filter(summonerId=summ['puuid']).first()
+    def createOrGetSummoner(self, summonerName, summonerId=None):
+        if summonerId is None:
+            summ = self.lol_watcher.summoner.by_name(self.myRegion, summonerName)
+            summonerId = summ['puuid']
+        summoner = Summoner.objects.filter(summonerId=summonerId).first()
         if not summoner:
-            summoner = Summoner(summonerName=summonerName, summonerId=summ['puuid'])
+            summoner = Summoner(summonerName=summonerName, summonerId=summonerId)
         elif summoner.summonerName != summonerName:
             summoner.summonerName = summonerName
         summoner.save()
         return summoner
+
+
 
     def updateHistory(self):
         start = 0
@@ -58,6 +66,7 @@ class LolSummoner():
                 if match not in self.matchIds:
 
                     rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
+
                     matchModel = Match(matchId=match, mode=rMatch['info']['gameMode'],
                                        date=datetime.utcfromtimestamp(
                                            rMatch['info']['gameStartTimestamp'] / 1000).astimezone(pytz.UTC))
@@ -69,7 +78,7 @@ class LolSummoner():
                     tmpParticipants = []
                     for participant in rMatch['info']['participants']:
                         if participant['summonerName'] != self.summonerName:
-                            summoner = self.createOrGetSummoner(participant['summonerName'])
+                            summoner = self.createOrGetSummoner(participant['summonerName'], participant['summonerId'])
                         else:
                             summoner = self.summoner
                         statsModel = Stats(
@@ -83,6 +92,7 @@ class LolSummoner():
                         statsModel.save()
                         matchModel.participantStats.add(statsModel)
                     matchModel.save()
+            start += self.count
         self.matches = Match.objects.filter(participantStats__summoner=self.summoner).order_by('-date')
 
     def convertMatchHistoryToSummonerNameDictWithMatch(self):

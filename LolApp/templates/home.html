@@ -8,7 +8,9 @@
 {% endblock %}
 {% csrf_token %}
 {% block content %}
+{% if datas %}
     <div>
+
         <div id="myModal" class="modal bd-example-modal-lg" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document" style="max-width: 80%">
                 <div class="modal-content">
@@ -21,7 +23,7 @@
 
                     <div class="modal-body">
 
-                        {% if datas %}
+
 
                             {% for idx, summonerName, data in  datas %}
                                 <div class="d-flex my-2">
@@ -77,7 +79,7 @@
                                 </table>
                             {% endfor %}
 
-                        {% endif %}
+
                     </div>
                 </div>
             </div>
@@ -99,6 +101,7 @@
 
 
     </script>
+    {% endif %}
     <div class=""
          style="width:30%;margin-left: 20%;margin-top: 11%;background: white;border-radius: 25px;padding: 20px">
         <Form method="post" action="{% url 'homePost' %}" style="">
