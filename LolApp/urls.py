@@ -19,5 +19,4 @@ from LolApp.views import Home
 
 urlpatterns = [
     path('', Home.as_view(), name="index"),
-    path('homePost', Home.as_view(), name="homePost"),
 ]
