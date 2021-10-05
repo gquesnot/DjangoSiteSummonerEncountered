@@ -157,8 +157,8 @@ class LolSummoner():
         #         print(v['found'], k, ":")
         #         for match in v['matches']:
         #             print('   ', printMatch(match))
-        with open(f"LolApp/util/json/{self.summonerName}_found.json", "w+") as f:
-            json.dump(res, f, indent=4)
+        # with open(f"LolApp/util/json/{self.summonerName}_found.json", "w+") as f:
+        #     json.dump(res, f, indent=4)
         print(f"done update {len(self.matches)} founds")
         self.founds = res
         return globalGrade, res
