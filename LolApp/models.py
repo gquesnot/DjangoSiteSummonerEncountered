@@ -28,12 +28,15 @@ class Stats(models.Model):
     deaths = models.IntegerField()
     assists = models.IntegerField()
     win = models.BooleanField()
-
+    gold = models.IntegerField(default=0)
+    level = models.IntegerField(default=0)
+    totalDamage = models.IntegerField(default=0)
+    grade = models.FloatField(default=0)
 
 class Match(models.Model):
     matchId = models.TextField(primary_key=True)
     mode = models.TextField(max_length=50, default="NORMAL")
-
+    duration = models.TextField(default=0)
     participantStats = models.ManyToManyField(Stats)
     date = models.DateTimeField()
 

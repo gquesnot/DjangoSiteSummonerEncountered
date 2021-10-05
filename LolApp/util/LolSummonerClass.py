@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import json
 from datetime import datetime
+from math import ceil
+
 from riotwatcher import LolWatcher, ApiError
 from ..models import Summoner, Stats, Match
 import pytz
@@ -9,14 +11,13 @@ import locale
 
 class LolSummoner():
     max = 40
-    count = 20
+    count = 50
     founds = None
 
     def __init__(self, summonerName):
         try:
             with open("config.json", "r") as f:
                 self.config = json.load(f)
-                print(self.config)
                 self.apiKey = self.config['apiKey']
                 self.myRegion = self.config['myRegion']
                 self.region = self.config['region']
@@ -50,24 +51,21 @@ class LolSummoner():
         summoner.save()
         return summoner
 
-
-
     def updateHistory(self):
         start = 0
         result = dict()
 
         stop = False
-        for i in range(round(self.max / self.count)):
+        for i in range(ceil(self.max / self.count)):
             # if stop:
             #     break
             for match in self.lol_watcher.match_v5.matchlist_by_puuid(self.region, self.summoner.summonerId,
                                                                       start=start, count=self.count):
-                print(match)
                 if match not in self.matchIds:
 
                     rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
-
-                    matchModel = Match(matchId=match, mode=rMatch['info']['gameMode'],
+                    duration = round(rMatch['info']['gameDuration'] / 1000)
+                    matchModel = Match(matchId=match, mode=rMatch['info']['gameMode'],duration = duration,
                                        date=datetime.utcfromtimestamp(
                                            rMatch['info']['gameStartTimestamp'] / 1000).astimezone(pytz.UTC))
                     matchModel.save()
@@ -78,16 +76,29 @@ class LolSummoner():
                     tmpParticipants = []
                     for participant in rMatch['info']['participants']:
                         if participant['summonerName'] != self.summonerName:
-                            summoner = self.createOrGetSummoner(participant['summonerName'], participant['summonerId'])
+                            summoner = self.createOrGetSummoner(participant['summonerName'], participant['puuid'])
                         else:
                             summoner = self.summoner
+                        gold = participant['goldEarned']
+                        level = participant['champLevel']
+                        totalDamage = participant['totalDamageDealt']
+                        kills = participant['kills']
+                        deaths = participant['deaths']
+                        assists = participant['assists']
+                        durationM = round(duration / 60)
+                        grade= 0.336 - (1.437 * (deaths/durationM)) + (0.000117 * (gold/durationM)) + (0.443 * ((kills+ assists) / durationM)) + (0.264 * (level/ durationM)) + (0.000013 * (totalDamage/durationM))
+                        grade = round(grade, 2)
                         statsModel = Stats(
                             summoner=summoner,
                             champName=participant['championName'],
-                            kills=participant['kills'],
-                            deaths=participant['deaths'],
-                            assists=participant['assists'],
-                            win=winTeamCode == participant['teamId']
+                            kills=kills,
+                            deaths=deaths,
+                            assists=assists,
+                            win=winTeamCode == participant['teamId'],
+                            gold=gold,
+                            level=level,
+                            totalDamage=totalDamage,
+                            grade=grade,
                         )
                         statsModel.save()
                         matchModel.participantStats.add(statsModel)
@@ -98,11 +109,12 @@ class LolSummoner():
     def convertMatchHistoryToSummonerNameDictWithMatch(self):
         res = dict()
         idx = 0
-        #locale.setlocale(locale.LC_ALL, 'fr_FR')
+        # locale.setlocale(locale.LC_ALL, 'fr_FR')
+        globalGrade = 0
         for idx, match in enumerate(self.matches):
-            # print(match)
             allParticiants = match.participantStats.all()
             myStats = match.participantStats.filter(summoner=self.summoner).first()
+            globalGrade += myStats.grade
             for stats in match.participantStats.all():
                 if stats != myStats:
                     ddate = match.date + timedelta(hours=4)
@@ -111,6 +123,8 @@ class LolSummoner():
                         "mode": match.mode,
                         "time": ddate.strftime("%d-%m-%Y %H:%M"),
                         "win": myStats.win,
+                        "myGrade": round(myStats.grade, 2),
+                        "grade": round(stats.grade, 2),
                         "vs": myStats.win != stats.win,
                         "myScore": f"{myStats.kills}.{myStats.deaths}.{myStats.assists}",
                         "myChamp": myStats.champName,
@@ -126,7 +140,18 @@ class LolSummoner():
                         res[stats.summoner.summonerName]['found'] += 1
                         res[stats.summoner.summonerName]['matches'].append(tmpRes)
             idx += 1
+        globalGrade = round(globalGrade/ len(self.matches),2)
         res = dict(sorted(res.items(), key=lambda item: item[1]['found'], reverse=True))
+        for k , v in res.items():
+            tmpGrade = 0
+            myTmpGrade = 0
+            tmpLen = len(v['matches'])
+            for match in v['matches']:
+                tmpGrade += match['grade']
+                myTmpGrade += match['myGrade']
+            res[k]['grade'] = round(tmpGrade/tmpLen, 2)
+            res[k]['myGrade'] = round(myTmpGrade/tmpLen, 2)
+
         # for k, v in res.items():
         #     if v['found'] > 1:
         #         print(v['found'], k, ":")
@@ -134,9 +159,9 @@ class LolSummoner():
         #             print('   ', printMatch(match))
         with open(f"LolApp/util/json/{self.summonerName}_found.json", "w+") as f:
             json.dump(res, f, indent=4)
-        print("done update founds")
+        print(f"done update {len(self.matches)} founds")
         self.founds = res
-        return res
+        return globalGrade, res
 
     def findSummonnerInActiveMatch(self):
         result = list()

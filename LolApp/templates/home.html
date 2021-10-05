@@ -8,35 +8,74 @@
 {% endblock %}
 {% csrf_token %}
 {% block content %}
-{% if datas %}
-    <div>
+    {% if datas %}
+        <div>
 
-        <div id="myModal" class="modal bd-example-modal-lg" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document" style="max-width: 80%">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Players Encountered
-                        {% if inGame %}
-                            <span class="badge badge-success">In Game</span>
-                            {% else %}
-                            <span class="badge badge-warning">Not In Game</span>
-                            {% endif %}
+            <div id="myModal" class="modal bd-example-modal-lg" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document" style="max-width: 80%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="d-flex w-100 justify-content-beetwen">
+                                <div style="width: 24.5%" class="my-5">
+                                    <h5 class="modal-title">Players Encountered</h5>
 
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                                </div>
+                                <div style="width: 24.50%" class="my-5">
+                                    globalGrade: {{ gGrade }}
+                                </div>
+                                <div style="width: 24.5%" class="my-5">
+                                    {% if inGame %}
+                                        <span class="badge badge-success">In Game</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Not In Game</span>
+                                    {% endif %}
+                                </div>
+                                <div style="width: 24.5%" class="my-5">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
 
-                    <div class="modal-body">
 
+                            </div>
+
+
+                        </div>
+
+                        <div class="modal-body">
 
 
                             {% for idx, summonerName, data in  datas %}
-                                <div class="d-flex my-2">
-                                    <div style="width: 30%">{{ summonerName }}</div>
-                                    <div style="width: 30%">{{ data.found }} Times</div>
-                                    <div style="width: 30%"><button class="btn btn-primary showHide" data-id="{{ idx }}">show</button></div>
+                                <div class="d-flex my-2 justify-content-center">
+                                    <div style="width: 20%">{{ summonerName }}</div>
+                                    <div style="width: 20%">{{ data.found }} Times</div>
+                                    <div style="width: 20%">My Grade:
+                                        {% if data.myGrade <= 0.25 %}
+                                            <span class="badge badge-danger">{{ data.myGrade }}</span>
+                                        {% elif data.myGrade <= 0.35 %}
+                                            <span class="badge badge-warning">{{ data.myGrade }}</span>
+                                        {% elif data.myGrade <= 0.35 %}
+                                            <span class="badge badge-primary">{{ data.myGrade }}</span>
+                                        {% elif data.myGrade >= 0.75 %}
+                                            <span class="badge badge-success">{{ data.myGrade }}</span>
+                                        {% else %}
+                                            {{ data.myGrade }}
+                                        {% endif %}
+
+
+                                    </div>
+                                    <div style="width: 20%">Other Grade:
+                                        {% if data.grade <= 0.25 %}
+                                            <span class="badge badge-danger">{{ data.grade }}</span>
+                                        {% elif data.grade >= 0.75 %}
+                                            <span class="badge badge-success">{{ data.grade }}</span>
+                                        {% else %}
+                                            {{ data.grade }}
+                                        {% endif %}
+                                    </div>
+                                    <div style="width: 20%">
+                                        <button class="btn btn-primary showHide" data-id="{{ idx }}">show</button>
+                                    </div>
                                 </div>
                                 <table class="table table-striped my-5" data-id="{{ idx }}">
                                     <thead class="thead-dark">
@@ -44,10 +83,13 @@
                                         <th>lastSeen</th>
                                         <th>mode</th>
                                         <th>date</th>
-                                        <th>win</th>
-                                        <th>vs</th>
-                                        <th>myScore</th>
+                                        <th></th>
+                                        <th></th>
+
                                         <th>myChamp</th>
+                                        <th>myScore</th>
+                                        <th>myGrade</th>
+                                        <th>otherGrade</th>
                                         <th>otherScore</th>
                                         <th>otherChamp</th>
                                     </tr>
@@ -74,8 +116,29 @@
 
 
                                             </td>
-                                            <td>{{ match.myScore }}</td>
                                             <td>{{ match.myChamp }}</td>
+                                            <td>
+                                                {{ match.myScore }}
+                                            </td>
+                                            <td>
+                                                {% if match.myGrade <= 0.25 %}
+                                                    <span class="badge badge-danger">{{ match.myGrade }}</span>
+                                                {% elif match.myGrade >= 0.75 %}
+                                                    <span class="badge badge-success">{{ match.myGrade }}</span>
+                                                {% else %}
+                                                    {{ match.myGrade }}
+                                                {% endif %}
+
+                                            </td>
+                                            <td>
+                                                {% if match.grade <= 0.25 %}
+                                                    <span class="badge badge-danger">{{ match.grade }}</span>
+                                                {% elif match.grade >= 0.75 %}
+                                                    <span class="badge badge-success">{{ match.grade }}</span>
+                                                {% else %}
+                                                    {{ match.grade }}
+                                                {% endif %}
+                                            </td>
                                             <td>{{ match.score }}</td>
                                             <td>{{ match.champ }}</td>
 
@@ -87,27 +150,27 @@
                             {% endfor %}
 
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script type="text/javascript">
-        $('#myModal').modal('show')
-        $('table').hide()
-        $('.showHide').click(function (idx) {
-            let target = $(this)
-            let table = target.parent().parent().next()
-            if (table.is(":visible")) {
-                target.text('show')
-            } else {
-                target.text('hide')
-            }
-           table.toggle()
-        })
+        <script type="text/javascript">
+            $('#myModal').modal('show')
+            $('table').hide()
+            $('.showHide').click(function (idx) {
+                let target = $(this)
+                let table = target.parent().parent().next()
+                if (table.is(":visible")) {
+                    target.text('show')
+                } else {
+                    target.text('hide')
+                }
+                table.toggle()
+            })
 
 
-    </script>
+        </script>
     {% endif %}
     <div class=""
          style="width:30%;margin-left: 20%;margin-top: 11%;background: white;border-radius: 25px;padding: 20px">

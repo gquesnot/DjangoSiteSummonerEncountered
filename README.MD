@@ -1,19 +1,19 @@
-## WEBAPP IN PYTHON THAT USE DJANGO TO CHECK IF YOU HAVE ALREADY ENCOUNTERED SOMEONE IN YOUR GAME
+## WEBAPP IN PYTHON THAT USE DJANGO TO CHECK IF YOU HAVE ALREADY ENCOUNTERED SOMEONE IN YOUR GAME AND SEE GRADE
 
-### if you are not in game show you all Summoner Encountered
-
-
-
-#### Installation
+##### if you are not in game show you all Summoner Encountered
+##### About Grade [see](https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb)
 
 
-## Python
+## Installation
+
+
+### Python
 ```
 pip install -r requirements.txt
 ```
 
 
-## Docker
+### Docker
 
 ```
 docker-compose -f docker-compose.yml up -d
