@@ -28,8 +28,8 @@ class LolSummoner():
             with open("config.json", "r") as f:
                 self.config = json.load(f)
                 self.apiKey = self.config['apiKey']
-                self.myRegion = myRegion
-                self.region = region
+                self.myRegion = self.config['myRegion'] if myRegion is None else myRegion
+                self.region = self.config['region'] if region is None else region
                 self.max = self.config['max']
                 if self.max > self.count:
                     self.count = self.max
