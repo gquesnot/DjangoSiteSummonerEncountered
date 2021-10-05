@@ -34,4 +34,4 @@ python manage.py runserver
 
 ## DEMO
 
-[Lien](http://13.37.99.139/)
+[Link](http://13.37.99.139/)
