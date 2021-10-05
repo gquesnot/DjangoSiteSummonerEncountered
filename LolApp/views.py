@@ -11,6 +11,7 @@ class Home(View):
 
     def post(self, request):
         ls = LolSummoner(request.POST['summonerName'])
+        print(ls.confOk)
         ls.updateHistory()
         globalGrade, founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
         inGame, currentFounds = ls.findSummonnerInActiveMatch()
