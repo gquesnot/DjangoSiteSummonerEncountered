@@ -21,7 +21,8 @@
 
                                 </div>
                                 <div style="width: 24.50%" class="my-5">
-                                    globalGrade: {{ gGrade }}
+                                    total Grade:
+                                    {% include 'custombadge.html' with grade=gGrade %}
                                 </div>
                                 <div style="width: 24.5%" class="my-5">
                                     {% if inGame %}
@@ -50,28 +51,12 @@
                                     <div style="width: 20%">{{ summonerName }}</div>
                                     <div style="width: 20%">{{ data.found }} Times</div>
                                     <div style="width: 20%">My Grade:
-                                        {% if data.myGrade <= 0.25 %}
-                                            <span class="badge badge-danger">{{ data.myGrade }}</span>
-                                        {% elif data.myGrade <= 0.35 %}
-                                            <span class="badge badge-warning">{{ data.myGrade }}</span>
-                                        {% elif data.myGrade <= 0.35 %}
-                                            <span class="badge badge-primary">{{ data.myGrade }}</span>
-                                        {% elif data.myGrade >= 0.75 %}
-                                            <span class="badge badge-success">{{ data.myGrade }}</span>
-                                        {% else %}
-                                            {{ data.myGrade }}
-                                        {% endif %}
+                                        {% include 'custombadge.html' with grade=data.myGrade %}
 
 
                                     </div>
                                     <div style="width: 20%">Other Grade:
-                                        {% if data.grade <= 0.25 %}
-                                            <span class="badge badge-danger">{{ data.grade }}</span>
-                                        {% elif data.grade >= 0.75 %}
-                                            <span class="badge badge-success">{{ data.grade }}</span>
-                                        {% else %}
-                                            {{ data.grade }}
-                                        {% endif %}
+                                        {% include 'custombadge.html' with grade=data.grade %}
                                     </div>
                                     <div style="width: 20%">
                                         <button class="btn btn-primary showHide" data-id="{{ idx }}">show</button>
@@ -121,23 +106,10 @@
                                                 {{ match.myScore }}
                                             </td>
                                             <td>
-                                                {% if match.myGrade <= 0.25 %}
-                                                    <span class="badge badge-danger">{{ match.myGrade }}</span>
-                                                {% elif match.myGrade >= 0.75 %}
-                                                    <span class="badge badge-success">{{ match.myGrade }}</span>
-                                                {% else %}
-                                                    {{ match.myGrade }}
-                                                {% endif %}
-
+                                                {% include 'custombadge.html' with grade=match.myGrade %}
                                             </td>
                                             <td>
-                                                {% if match.grade <= 0.25 %}
-                                                    <span class="badge badge-danger">{{ match.grade }}</span>
-                                                {% elif match.grade >= 0.75 %}
-                                                    <span class="badge badge-success">{{ match.grade }}</span>
-                                                {% else %}
-                                                    {{ match.grade }}
-                                                {% endif %}
+                                                 {% include 'custombadge.html' with grade=match.grade %}
                                             </td>
                                             <td>{{ match.score }}</td>
                                             <td>{{ match.champ }}</td>
