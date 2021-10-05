@@ -31,7 +31,7 @@ class LolSummoner():
                 self.myRegion = myRegion
                 self.region = region
                 self.max = self.config['max']
-                if self.max > self.count:
+                if self.max < self.count:
                     self.count = self.max
 
                 self.summonerName = summonerName
