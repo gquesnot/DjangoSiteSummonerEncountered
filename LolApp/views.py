@@ -13,9 +13,9 @@ class Home(View):
         ls = LolSummoner(request.POST['summonerName'])
         ls.updateHistory()
         founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
-        ok, currentFounds = ls.findSummonnerInActiveMatch()
+        inGame, currentFounds = ls.findSummonnerInActiveMatch()
         if currentFounds is not None:
-            return render(request, "home.html", {"datas": zip(range(len(currentFounds.keys())),currentFounds.keys(), currentFounds.values()), "error": ok})
+            return render(request, "home.html", {"datas": zip(range(len(currentFounds.keys())),currentFounds.keys(), currentFounds.values()), "inGame": inGame})
         else:
 
-            return render(request, "home.html", {"inGame": True})
+            return render(request, "home.html", {"inGame": inGame})
