@@ -15,7 +15,14 @@
             <div class="modal-dialog" role="document" style="max-width: 80%">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Players Encountered</h5>
+                        <h5 class="modal-title">Players Encountered
+                        {% if inGame %}
+                            <span class="badge badge-success">In Game</span>
+                            {% else %}
+                            <span class="badge badge-warning">Not In Game</span>
+                            {% endif %}
+
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

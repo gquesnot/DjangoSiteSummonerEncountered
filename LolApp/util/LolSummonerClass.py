@@ -149,9 +149,9 @@ class LolSummoner():
                 if participant['summonerName'] in self.founds.keys():
                     found = self.founds[participant['summonerName']]
                     result.append(found)
-            return result
+            return True, result
         except:
-            return self.founds
+            return False, self.founds
 
     @staticmethod
     def printMatch(match):
