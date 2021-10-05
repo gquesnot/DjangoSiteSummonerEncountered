@@ -13,15 +13,27 @@ class LolSummoner():
     max = 40
     count = 50
     founds = None
-
-    def __init__(self, summonerName):
+    regionByMyRegion = {
+        "euw1": "EUROPE",
+        "eun1": "EUROPE",
+        "na1": "AMERICAS",
+        "kr": "ASIA",
+    }
+    def __init__(self, summonerName, myRegion=None):
         try:
+            if myRegion is not None:
+                region = self.regionByMyRegion[myRegion]
+            else:
+                region = None
             with open("config.json", "r") as f:
                 self.config = json.load(f)
                 self.apiKey = self.config['apiKey']
-                self.myRegion = self.config['myRegion']
-                self.region = self.config['region']
+                self.myRegion = self.config['myRegion'] if myRegion is None else myRegion
+                self.region = self.config['region'] if region is None else region
                 self.max = self.config['max']
+                if self.max > self.count:
+                    self.count = self.max
+
                 self.summonerName = summonerName
                 try:
                     self.lol_watcher = LolWatcher(self.apiKey, default_match_v5=True)
@@ -39,13 +51,14 @@ class LolSummoner():
         except:
             self.confOk = False
 
-    def createOrGetSummoner(self, summonerName, summonerId=None):
+    def createOrGetSummoner(self, summonerName, summonerId=None, rSummonerId=None):
         if summonerId is None:
             summ = self.lol_watcher.summoner.by_name(self.myRegion, summonerName)
             summonerId = summ['puuid']
+            rSummonerId = summ['id']
         summoner = Summoner.objects.filter(summonerId=summonerId).first()
         if not summoner:
-            summoner = Summoner(summonerName=summonerName, summonerId=summonerId)
+            summoner = Summoner(summonerName=summonerName, summonerId=summonerId, rsummonerId=rSummonerId)
         elif summoner.summonerName != summonerName:
             summoner.summonerName = summonerName
         summoner.save()
@@ -65,7 +78,7 @@ class LolSummoner():
 
                     rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
                     duration = round(rMatch['info']['gameDuration'] / 1000)
-                    matchModel = Match(matchId=match, mode=rMatch['info']['gameMode'],duration = duration,
+                    matchModel = Match(matchId=match, mode=rMatch['info']['gameMode'], duration=duration,
                                        date=datetime.utcfromtimestamp(
                                            rMatch['info']['gameStartTimestamp'] / 1000).astimezone(pytz.UTC))
                     matchModel.save()
@@ -76,7 +89,7 @@ class LolSummoner():
                     tmpParticipants = []
                     for participant in rMatch['info']['participants']:
                         if participant['summonerName'] != self.summonerName:
-                            summoner = self.createOrGetSummoner(participant['summonerName'], participant['puuid'])
+                            summoner = self.createOrGetSummoner(participant['summonerName'], participant['puuid'], participant['summonerId'])
                         else:
                             summoner = self.summoner
                         gold = participant['goldEarned']
@@ -86,7 +99,9 @@ class LolSummoner():
                         deaths = participant['deaths']
                         assists = participant['assists']
                         durationM = round(duration / 60)
-                        grade= 0.336 - (1.437 * (deaths/durationM)) + (0.000117 * (gold/durationM)) + (0.443 * ((kills+ assists) / durationM)) + (0.264 * (level/ durationM)) + (0.000013 * (totalDamage/durationM))
+                        grade = 0.336 - (1.437 * (deaths / durationM)) + (0.000117 * (gold / durationM)) + (
+                                    0.443 * ((kills + assists) / durationM)) + (0.264 * (level / durationM)) + (
+                                            0.000013 * (totalDamage / durationM))
                         grade = round(grade, 2)
                         statsModel = Stats(
                             summoner=summoner,
@@ -140,17 +155,17 @@ class LolSummoner():
                         res[stats.summoner.summonerName]['found'] += 1
                         res[stats.summoner.summonerName]['matches'].append(tmpRes)
             idx += 1
-        globalGrade = round(globalGrade/ len(self.matches),2)
+        globalGrade = round(globalGrade / len(self.matches), 2)
         res = dict(sorted(res.items(), key=lambda item: item[1]['found'], reverse=True))
-        for k , v in res.items():
+        for k, v in res.items():
             tmpGrade = 0
             myTmpGrade = 0
             tmpLen = len(v['matches'])
             for match in v['matches']:
                 tmpGrade += match['grade']
                 myTmpGrade += match['myGrade']
-            res[k]['grade'] = round(tmpGrade/tmpLen, 2)
-            res[k]['myGrade'] = round(myTmpGrade/tmpLen, 2)
+            res[k]['grade'] = round(tmpGrade / tmpLen, 2)
+            res[k]['myGrade'] = round(myTmpGrade / tmpLen, 2)
 
         # for k, v in res.items():
         #     if v['found'] > 1:
@@ -164,16 +179,16 @@ class LolSummoner():
         return globalGrade, res
 
     def findSummonnerInActiveMatch(self):
-        result = list()
+        result = dict()
+
         try:
-            actualMatch = self.lol_watcher.spectator.by_summoner(self.myRegion, self.summoner.summonerId)
+            actualMatch = self.lol_watcher.spectator.by_summoner(self.myRegion, self.summoner.rsummonerId)
             print("GAME STARTED")
             for participant in actualMatch['participants']:
 
                 # print(participant['summonerName'],  participant['summonerName'] in founds.keys())
                 if participant['summonerName'] in self.founds.keys():
-                    found = self.founds[participant['summonerName']]
-                    result.append(found)
+                    result[participant['summonerName']] = self.founds[participant['summonerName']]
             return True, result
         except:
             return False, self.founds

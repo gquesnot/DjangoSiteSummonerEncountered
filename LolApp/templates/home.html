@@ -109,7 +109,7 @@
                                                 {% include 'custombadge.html' with grade=match.myGrade %}
                                             </td>
                                             <td>
-                                                 {% include 'custombadge.html' with grade=match.grade %}
+                                                {% include 'custombadge.html' with grade=match.grade %}
                                             </td>
                                             <td>{{ match.score }}</td>
                                             <td>{{ match.champ }}</td>
@@ -148,11 +148,28 @@
          style="width:30%;margin-left: 20%;margin-top: 11%;background: white;border-radius: 25px;padding: 20px">
         <Form method="post" action="{% url 'index' %}" style="">
             {% csrf_token %}
-            <div class="form-group mb-3">
-                <label for="summonerName">Summoner Name</label>
-                <input class="form-control" id="summonerName" name="summonerName" type="text">
+            <div style="display: flex; justify-content: space-between">
+                <div class="form-group mb-3" style="width: 50%">
+                    <label for="summonerName">Summoner Name</label>
+                    <input class="form-control" id="summonerName" name="summonerName" type="text">
+
+                </div>
+
+                <div class="form-group mb-3" style="width: 45%">
+                    <div class="input-group-prepend" >
+                        <label class="form-group-text" for="myRegion">Region</label>
+                    </div>
+                    <select class="custom-select" id="myRegion" name="myRegion">
+                        <option value="euw1" selected>EUW</option>
+                        <option value="eun1">EUN</option>
+                        <option value="kr">KR</option>
+                        <option value="na1">NA</option>
+                    </select>
+                </div>
+
 
             </div>
+
             <div class="w-100 d-flex justify-content-center">
                 <button class="btn btn-success mt-5 w-50 " type="submit">Search</button>
             </div>

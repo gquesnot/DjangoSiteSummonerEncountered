@@ -8,6 +8,7 @@ from django.db import models
 
 class Summoner(models.Model):
     summonerId = models.TextField(primary_key=True)
+    rsummonerId = models.TextField(default="")
     summonerName = models.TextField(max_length=200)
 
     def getDict(self):

@@ -6,17 +6,20 @@ from LolApp.util.LolSummonerClass import LolSummoner
 
 class Home(View):
 
+
     def get(self, request):
         return render(request, "home.html")
 
     def post(self, request):
-        ls = LolSummoner(request.POST['summonerName'])
-        print(ls)
-        ls.updateHistory()
-        globalGrade, founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
-        inGame, currentFounds = ls.findSummonnerInActiveMatch()
-        if currentFounds is not None:
+        myRegion = request.POST['myRegion']
+
+
+        ls = LolSummoner(request.POST['summonerName'], myRegion)
+        if ls.confOk:
+            ls.updateHistory()
+            globalGrade, founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
+            inGame, currentFounds = ls.findSummonnerInActiveMatch()
             return render(request, "home.html", {"gGrade":globalGrade,"datas": zip(range(len(currentFounds.keys())),currentFounds.keys(), currentFounds.values()), "inGame": inGame})
         else:
-
-            return render(request, "home.html", {"inGame": inGame})
+            print("badCOnfig")
+            return render(request, "home.html")
