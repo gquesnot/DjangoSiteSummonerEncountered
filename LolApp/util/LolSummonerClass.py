@@ -117,7 +117,7 @@ class LolSummoner():
                             gold=gold,
                             level=level,
                             totalDamage=totalDamage,
-                            grade=grade *10,
+                            grade=grade,
                         )
                         statsModel.save()
                         matchModel.participantStats.add(statsModel)
@@ -180,7 +180,7 @@ class LolSummoner():
         #     json.dump(res, f, indent=4)
         print(f"done update {len(self.matches)} founds")
         self.founds = res
-        return globalGrade, res
+        return globalGrade * 10, res
 
     def findSummonnerInActiveMatch(self):
         result = dict()
