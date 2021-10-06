@@ -117,7 +117,7 @@ class LolSummoner():
                             gold=gold,
                             level=level,
                             totalDamage=totalDamage,
-                            grade=grade,
+                            grade=grade *10,
                         )
                         statsModel.save()
                         matchModel.participantStats.add(statsModel)
