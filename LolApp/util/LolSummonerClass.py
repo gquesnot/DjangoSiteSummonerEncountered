@@ -159,7 +159,7 @@ class LolSummoner():
                         res[stats.summoner.summonerName]['found'] += 1
                         res[stats.summoner.summonerName]['matches'].append(tmpRes)
             idx += 1
-        globalGrade = round(globalGrade / len(self.matches), 2)
+        globalGrade = round((globalGrade / len(self.matches)) * 10, 2)
         res = dict(sorted(res.items(), key=lambda item: item[1]['found'], reverse=True))
         for k, v in res.items():
             tmpGrade = 0
@@ -180,7 +180,7 @@ class LolSummoner():
         #     json.dump(res, f, indent=4)
         print(f"done update {len(self.matches)} founds")
         self.founds = res
-        return globalGrade * 10, res
+        return globalGrade, res
 
     def findSummonnerInActiveMatch(self):
         result = dict()

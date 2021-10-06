@@ -1,10 +1,10 @@
-{% if grade <= 2.5 %}
+{% if grade <= 3 %}
 <span class="badge badge-danger">{{ grade }}</span>
-{% elif grade <= 3.5 %}
+{% elif grade <= 4.5 %}
 <span class="badge badge-warning">{{ grade }}</span>
-{% elif grade >= 7.5 %}
+{% elif grade >= 7 %}
 <span class="badge badge-success">{{ grade }}</span>
-{% elif grade >= 6.5 %}
+{% elif grade >= 5.5 %}
 <span class="badge badge-primary">{{ grade }}</span>
 {% else %}
 {{ grade }}

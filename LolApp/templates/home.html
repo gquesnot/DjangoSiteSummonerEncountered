@@ -14,24 +14,72 @@
             <div id="myModal" class="modal bd-example-modal-lg" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document" style="max-width: 80%">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <div class="d-flex w-100 justify-content-beetwen">
-                                <div style="width: 24.5%" class="my-5">
+                        <div class="modal-header d-flex flex-column">
+                            <div class="w-100">
+                                <h5 class="modal-title pb-2">Grade Chart </h5>
+                                <table class="table tableShow">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col"  class=text-center" style="color:white">1</th>
+                                        <th scope="col" class="text-center">0</th>
+                                        <th scope="col" class="text-center" >1</th>
+                                        <th scope="col" class="text-center">2</th>
+                                        <th scope="col" class="text-center" >3</th>
+                                        <th scope="col" class="text-center">4</th>
+                                        <th scope="col" class="text-center" >5</th>
+                                        <th scope="col" class="text-center">6</th>
+                                        <th scope="col" class="text-center" >7</th>
+                                        <th scope="col" class="text-center">8</th>
+                                        <th scope="col" class="text-center" >9</th>
+                                        <th scope="col" class="text-center" >10</th>
+                                        <th scope="col" class="text-center" style="color:white">1</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="bg-danger"></td>
+                                        <td class="bg-danger"></td>
+                                        <td class="bg-danger"></td>
+                                        <td class="bg-danger"></td>
+                                        <td class="bg-warning"></td>
+                                        <td class="bg-warning"></td>
+                                        <td ></td>
+                                        <td class="bg-primary"></td>
+                                        <td class="bg-primary"></td>
+                                        <td class="bg-success"></td>
+                                        <td class="bg-success"></td>
+                                        <td class="bg-success"></td>
+                                        <td class="bg-success"></td>
+                                    </tr>
+                                    <tr>
+
+                                        <td colspan="4" class="text-center">Out Of The Game</td>
+                                        <td colspan="2" class="text-center">Bad Game</td>
+                                        <td colspan="1" class="text-center">Average</td>
+                                        <td colspan="2" class="text-center">Good Game</td>
+                                        <td colspan="4" class="text-center">Carry/Hard Carry</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="d-flex w-100 justify-content-between mt-3">
+
+
+                                <div style="width: 24.5%">
                                     <h5 class="modal-title">Players Encountered</h5>
 
                                 </div>
-                                <div style="width: 24.50%" class="my-5">
+                                <div style="width: 24.50%">
                                     total Grade:
                                     {% include 'custombadge.html' with grade=gGrade %}
                                 </div>
-                                <div style="width: 24.5%" class="my-5">
+                                <div style="width: 24.5%">
                                     {% if inGame %}
                                         <span class="badge badge-success">In Game</span>
                                     {% else %}
                                         <span class="badge badge-warning">Not In Game</span>
                                     {% endif %}
                                 </div>
-                                <div style="width: 24.5%" class="my-5">
+                                <div style="width: 5%">
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -62,7 +110,7 @@
                                         <button class="btn btn-primary showHide" data-id="{{ idx }}">show</button>
                                     </div>
                                 </div>
-                                <table class="table table-striped my-5" data-id="{{ idx }}">
+                                <table class="table tableHide table-striped my-5" data-id="{{ idx }}">
                                     <thead class="thead-dark">
                                     <tr>
                                         <th>lastSeen</th>
@@ -129,7 +177,7 @@
         </div>
         <script type="text/javascript">
             $('#myModal').modal('show')
-            $('table').hide()
+            $('table.tableHide').hide()
             $('.showHide').click(function (idx) {
                 let target = $(this)
                 let table = target.parent().parent().next()
@@ -154,7 +202,7 @@
                     <label for="summonerName">Summoner Name</label>
                     <input class="form-control" id="summonerName" name="summonerName" type="text"
                             {% if summonerName %}
-                                value="{{ summonerName }}"
+                           value="{{ summonerName }}"
                             {% endif %}
                     >
 
