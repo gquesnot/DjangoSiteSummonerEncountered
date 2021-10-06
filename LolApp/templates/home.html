@@ -146,13 +146,17 @@
     {% endif %}
     <div class=""
          style="width:40%;margin-left: 12%;margin-top: 21%;background: white;border-radius: 25px;padding: 20px">
-                        <h1 class="py-3 text-center mb-3"> Lol Summoner Encountered</h1>
+        <h1 class="py-3 text-center mb-3"> Lol Summoner Encountered</h1>
         <Form method="post" action="{% url 'index' %}" style="">
             {% csrf_token %}
             <div style="display: flex; justify-content: space-between">
                 <div class="form-group mb-3" style="width: 50%">
                     <label for="summonerName">Summoner Name</label>
-                    <input class="form-control" id="summonerName" name="summonerName" type="text">
+                    <input class="form-control" id="summonerName" name="summonerName" type="text"
+                            {% if summonerName %}
+                                value="{{ summonerName }}"
+                            {% endif %}
+                    >
 
                 </div>
 
@@ -174,10 +178,11 @@
             <div class="w-100 h-50 d-flex justify-content-between">
 
                 <div class="mr-1 mt-5" style="width: 45%">
-                    <a class="btn btn-primary w-100" href="https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb"
+                    <a class="btn btn-primary w-100"
+                       href="https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb"
                        target="_blank">informations about grade</a>
                 </div>
-                 <button class="btn btn-success ml-1 mt-5" type="submit" style="width: 45%">Search</button>
+                <button class="btn btn-success ml-1 mt-5" type="submit" style="width: 45%">Search</button>
 
 
             </div>

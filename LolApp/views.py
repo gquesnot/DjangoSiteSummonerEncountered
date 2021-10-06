@@ -13,13 +13,13 @@ class Home(View):
     def post(self, request):
         myRegion = request.POST['myRegion']
 
-
-        ls = LolSummoner(request.POST['summonerName'], myRegion)
+        summonerName = request.POST['summonerName']
+        ls = LolSummoner(summonerName, myRegion)
         if ls.confOk:
             ls.updateHistory()
             globalGrade, founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
             inGame, currentFounds = ls.findSummonnerInActiveMatch()
-            return render(request, "home.html", {"gGrade":globalGrade,"datas": zip(range(len(currentFounds.keys())),currentFounds.keys(), currentFounds.values()), "inGame": inGame})
+            return render(request, "home.html", {"gGrade":globalGrade,"datas": zip(range(len(currentFounds.keys())),currentFounds.keys(), currentFounds.values()), "inGame": inGame, "summonerName": summonerName})
         else:
             print("badCOnfig")
-            return render(request, "home.html")
+            return render(request, "home.html", {"summonerName": summonerName})
