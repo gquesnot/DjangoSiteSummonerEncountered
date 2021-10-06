@@ -75,15 +75,27 @@
                             <div class="d-flex w-100 justify-content-between mt-3">
 
 
-                                <div style="width: 24.5%">
-                                    <h5 class="modal-title">Players Encountered</h5>
+                                <div style="width: 19.5%" class="d-flex justify-content-center">
+                                    <p style="font-size: 20px">Player Encountered</p>
 
                                 </div>
-                                <div style="width: 24.50%">
-                                    total Grade:
-                                    {% include 'custombadge.html' with grade=gGrade %}
+                            <div style="width: 19.5%" class="d-flex justify-content-center">
+                                    <p style="font-size: 20px">How Many Times ?</p>
+
                                 </div>
-                                <div style="width: 24.5%">
+
+                                <div style="width: 19.50%" class="d-flex justify-content-center flex-column">
+                                    <div class="text-center">Your Grade:</div>
+                                    <div class="text-center">Total:
+                                    {% include 'custombadge.html' with grade=gGrade %}</div>
+
+
+                                </div>
+                            <div style="width: 19.5%" class="d-flex justify-content-center">
+                                    <p style="font-size: 20px">Other Player Grade</p>
+
+                                </div>
+                                <div style="width: 19.5%" class="d-flex justify-content-center h-50">
                                     {% if inGame %}
                                         <span class="badge badge-success">In Game</span>
                                     {% else %}
@@ -102,18 +114,21 @@
 
 
                             {% for idx, summonerName, data in  datas %}
-                                <div class="d-flex my-2 justify-content-center">
-                                    <div style="width: 20%">{{ summonerName }}</div>
-                                    <div style="width: 20%">{{ data.found }} Times</div>
-                                    <div style="width: 20%">My Grade:
+                                <div class="d-flex my-2 justify-content-between" style="height: 50%">
+                                    <div style="width: 19.5%" class="d-flex justify-content-center">
+                                        {{ summonerName }}>
+
+                                    </div>
+                                    <div style="width: 19.5%" class="d-flex justify-content-center">{{ data.found }}</div>
+                                    <div style="width: 19.5%" class="d-flex justify-content-center">
                                         {% include 'custombadge.html' with grade=data.myGrade %}
 
 
                                     </div>
-                                    <div style="width: 20%">Other Grade:
+                                    <div style="width: 19.5%" class="d-flex justify-content-center">
                                         {% include 'custombadge.html' with grade=data.grade %}
                                     </div>
-                                    <div style="width: 20%">
+                                    <div style="width: 19.5%" class="d-flex justify-content-center">
                                         <button class="btn btn-primary showHide" data-id="{{ idx }}">show</button>
                                     </div>
                                 </div>
