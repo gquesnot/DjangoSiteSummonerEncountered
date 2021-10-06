@@ -142,8 +142,8 @@ class LolSummoner():
                         "mode": match.mode,
                         "time": ddate.strftime("%d-%m-%Y %H:%M"),
                         "win": myStats.win,
-                        "myGrade": round(myStats.grade, 2) * 10,
-                        "grade": round(stats.grade, 2) * 10,
+                        "myGrade": round(myStats.grade * 10, 2),
+                        "grade": round(stats.grade  * 10, 2),
                         "vs": myStats.win != stats.win,
                         "myScore": f"{myStats.kills}.{myStats.deaths}.{myStats.assists}",
                         "myChamp": myStats.champName,
@@ -166,8 +166,8 @@ class LolSummoner():
             myTmpGrade = 0
             tmpLen = len(v['matches'])
             for match in v['matches']:
-                tmpGrade += match['grade'] * 10
-                myTmpGrade += match['myGrade'] * 10
+                tmpGrade += match['grade']
+                myTmpGrade += match['myGrade']
             res[k]['grade'] = round(tmpGrade / tmpLen, 2)
             res[k]['myGrade'] = round(myTmpGrade / tmpLen, 2)
 
