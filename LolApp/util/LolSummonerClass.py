@@ -99,7 +99,11 @@ class LolSummoner():
                         deaths = participant['deaths']
                         assists = participant['assists']
                         durationM = round(duration / 60)
-                        grade = 0.336 - (1.437 * (deaths / durationM)) + (0.000117 * (gold / durationM)) + (
+                        if durationM == 0:
+                            grade= 0
+                        else:
+
+                            grade = 0.336 - (1.437 * (deaths / durationM)) + (0.000117 * (gold / durationM)) + (
                                     0.443 * ((kills + assists) / durationM)) + (0.264 * (level / durationM)) + (
                                             0.000013 * (totalDamage / durationM))
                         grade = round(grade, 2)
