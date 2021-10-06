@@ -16,7 +16,18 @@
                     <div class="modal-content">
                         <div class="modal-header d-flex flex-column">
                             <div class="w-100">
-                                <h5 class="modal-title pb-2">Grade Chart </h5>
+                                <div class="d-flex">
+                                    <div style="width: 95%">
+
+                                        <h5 class="modal-title pb-2">Grade Chart </h5>
+                                    </div>
+                                <div style="width: 5%">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                </div>
+
                                 <table class="table tableShow">
                                     <thead>
                                     <tr>
@@ -79,11 +90,7 @@
                                         <span class="badge badge-warning">Not In Game</span>
                                     {% endif %}
                                 </div>
-                                <div style="width: 5%">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+
 
 
                             </div>
