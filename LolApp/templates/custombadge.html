@@ -1,13 +1,13 @@
 
     {% if grade <= 3 %}
-<span style="line-height: 30px" class="badge badge-danger">{{ grade }}</span>
+<span style="line-height: 30px; min-width: 50px;" class="badge badge-danger">{{ grade }}</span>
 {% elif grade <= 4.5 %}
-<span style="line-height: 30px" class="badge badge-warning">{{ grade }}</span>
+<span style="line-height: 30px; min-width: 50px;" class="badge badge-warning">{{ grade }}</span>
 {% elif grade >= 7 %}
-<span style="line-height: 30px" class="badge badge-success">{{ grade }}</span>
+<span style="line-height: 30px; min-width: 50px;" class="badge badge-success">{{ grade }}</span>
 {% elif grade >= 5.5 %}
-<span style="line-height: 30px" class="badge badge-primary">{{ grade }}</span>
+<span style="line-height: 30px; min-width: 50px;" class="badge badge-primary">{{ grade }}</span>
 {% else %}
-    <span style="line-height: 30px" class="badge badge-light">{{ grade }}</span>
+    <span style="line-height: 30px; min-width: 50px;" class="badge badge-light">{{ grade }}</span>
 {% endif %}
 
