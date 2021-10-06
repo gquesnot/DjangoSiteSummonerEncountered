@@ -1,7 +1,7 @@
 ## WEBAPP IN PYTHON THAT USE DJANGO TO CHECK IF YOU HAVE ALREADY ENCOUNTERED SOMEONE IN YOUR GAME AND SEE GRADE
 
 ##### if you are not in game show you all Summoner Encountered
-##### About Grade [see](https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb)
+##### About Grade [see](https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb), i'm not the autor
 
 
 ## Installation
