@@ -1,4 +1,5 @@
 {
-  "apiKey": "myApiKey",
-  "max": 30
+  "apiKey": "",
+  "max": 30,
+  "version": "11.20.1"
 }
