@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.urls import path
 
-from LolApp.views import Home
+from LolApp.views import Home, updateData
 
 urlpatterns = [
     path('', Home.as_view(), name="index"),
+    path('update', updateData, name="updateData"),
 ]
