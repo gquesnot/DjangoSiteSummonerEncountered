@@ -96,8 +96,9 @@ class Home(View):
             "platforms": self.platforms
         }
         ls = LolSummoner(summonerName, region=region.name, platform=platform.name.lower(), gameType=gameType)
-        summonerName = ls.summoner.summonerName
+
         if ls.confOk:
+            summonerName = ls.summoner.summonerName
             ls.updateHistory()
             response['gGrade'], founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
             if len(founds) != 0:
