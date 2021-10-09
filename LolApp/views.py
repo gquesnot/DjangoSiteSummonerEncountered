@@ -98,7 +98,7 @@ class Home(View):
         ls = LolSummoner(summonerName, region=region.name, platform=platform.name.lower(), gameType=gameType)
         if ls.confOk:
             ls.updateHistory()
-            response['globalGrade'], founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
+            response['gGrade'], founds = ls.convertMatchHistoryToSummonerNameDictWithMatch()
             if len(founds) != 0:
                 response['inGame'], currentFounds = ls.findSummonnerInActiveMatch()
                 response['datas'] = zip(range(len(currentFounds.keys())), currentFounds.keys(), currentFounds.values())

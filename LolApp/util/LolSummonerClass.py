@@ -3,7 +3,8 @@ import json
 from datetime import datetime
 from math import ceil
 
-from riotwatcher import LolWatcher, ApiError
+from riotwatcher import LolWatcher, ApiError, Handlers
+
 from ..models import Summoner, Stats, Match, GameChamp, GameQueue, GameMode, GameMap
 import pytz
 import locale
@@ -23,7 +24,7 @@ class LolSummoner():
     def __init__(self, summonerName=None, region=None, platform=None, gameType=None):
         try:
             self.region = region
-            self.platform= platform
+            self.platform = platform
             self.gameType = gameType
 
             with open("config.json", "r") as f:
@@ -57,7 +58,10 @@ class LolSummoner():
             summ = self.lol_watcher.summoner.by_name(self.platform, summonerName)
             summonerId = summ['puuid']
             rSummonerId = summ['id']
+            summonerName = summ['name']
+
         summoner = Summoner.objects.filter(summonerId=summonerId).first()
+
         if not summoner:
             summoner = Summoner(summonerName=summonerName, summonerId=summonerId, rsummonerId=rSummonerId)
         elif summoner.summonerName != summonerName:
@@ -78,8 +82,9 @@ class LolSummoner():
                 if match not in self.matchIds:
 
                     rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
-
-                    duration = round(rMatch['info']['gameDuration'] / 1000)
+                    duration = rMatch['info']['gameDuration']
+                    if duration > 100000:
+                        duration = duration / 1000
                     mode = GameMode.objects.get(mode=rMatch['info']['gameMode'])
                     queue = GameQueue.objects.get(queueId=rMatch['info']['queueId'])
                     map_ = GameMap.objects.get(mapId=rMatch['info']['mapId'])
@@ -105,13 +110,20 @@ class LolSummoner():
                         deaths = participant['deaths']
                         assists = participant['assists']
                         durationM = round(duration / 60)
+
                         if durationM == 0:
                             grade = 0.5
+                            gradeString = ""
                         else:
 
                             grade = 0.336 - (1.437 * (deaths / durationM)) + (0.000117 * (gold / durationM)) + (
                                     0.443 * ((kills + assists) / durationM)) + (0.264 * (level / durationM)) + (
                                             0.000013 * (totalDamage / durationM))
+                            gradeString = f"=> 0.336 - ( 1.437 * (deaths / gameDurationInMinute)  + (0.000117 * (golds / gameDurationInMinute)) + (0.443 * ((kills + assists) / gameDurationInMinute)) + (0.264 * (levels / gameDurationInMinute)) + (0.000013 * (totalDamages / gameDurationInMinute)))<br>" + \
+                                          f"=> 0.336 - ( 1.437 * ({deaths} / {durationM})  + (0.000117 * ({gold} / {durationM})) + (0.443 * (({kills} + {assists}) / {durationM})) + (0.264 * ({level} / {durationM})) + (0.000013 * ({totalDamage} / {durationM})))<br>" + \
+                                          f"=> 0.336 - {round(1.437 * (deaths / durationM), 5)}  + {round(0.000117 * (gold / durationM),5)} + {round(0.443 * ((kills + assists) / durationM),5)} + {round(0.264 * (level / durationM),5)} + {round(0.000013 * (totalDamage / durationM),5)}<br>" +\
+                                          f"=> {grade}<br>"
+
                         grade = round(grade, 2)
                         statsModel = Stats(
                             summoner=summoner,
@@ -124,6 +136,7 @@ class LolSummoner():
                             level=level,
                             totalDamage=totalDamage,
                             grade=grade,
+                            gradeString = gradeString
                         )
                         statsModel.save()
                         matchModel.participantStats.add(statsModel)
@@ -131,25 +144,27 @@ class LolSummoner():
             start += self.count
         self.getMatches()
 
-
     def getMatches(self):
         if self.gameType == "NORMAL":
-            self.matches = Match.objects.filter(participantStats__summoner=self.summoner, mode__mode="CLASSIC").exclude(queue__description__contains="Ranked").order_by('-date')
+            self.matches = Match.objects.filter(participantStats__summoner=self.summoner, mode__mode="CLASSIC").exclude(
+                queue__description__contains="Ranked").order_by('-date')
 
         elif self.gameType == "Ranked":
-            self.matches = Match.objects.filter(participantStats__summoner=self.summoner, mode__mode="CLASSIC", queue__description__contains="Ranked").order_by('-date')
+            self.matches = Match.objects.filter(participantStats__summoner=self.summoner, mode__mode="CLASSIC",
+                                                queue__description__contains="Ranked").order_by('-date')
 
         elif self.gameType == "ARAM":
-            self.matches = Match.objects.filter(participantStats__summoner=self.summoner, mode__mode="ARAM").order_by('-date')
+            self.matches = Match.objects.filter(participantStats__summoner=self.summoner, mode__mode="ARAM").order_by(
+                '-date')
 
         elif self.gameType == "GAME MODE":
 
-            self.matches = Match.objects.filter(participantStats__summoner=self.summoner).exclude(mode__mode__in=["CLASSIC", "ARAM", "TUTORIAL"]).order_by('-date')
+            self.matches = Match.objects.filter(participantStats__summoner=self.summoner).exclude(
+                mode__mode__in=["CLASSIC", "ARAM", "TUTORIAL"]).order_by('-date')
         else:
             self.matches = Match.objects.filter(participantStats__summoner=self.summoner).order_by('-date')
 
     def convertMatchHistoryToSummonerNameDictWithMatch(self):
-
 
         res = dict()
         idx = 0
@@ -172,6 +187,8 @@ class LolSummoner():
                             "win": myStats.win,
                             "myGrade": round(myStats.grade * 10, 2),
                             "grade": round(stats.grade * 10, 2),
+                            "gradeString": stats.gradeString,
+                            "myGradeString": myStats.gradeString,
                             "vs": myStats.win != stats.win,
                             "myScore": f"{myStats.kills}.{myStats.deaths}.{myStats.assists}",
                             "myChamp": myStats.champ,
@@ -201,7 +218,7 @@ class LolSummoner():
 
             self.founds = res
             return globalGrade, res
-        return 0,[]
+        return 0, []
 
     def findSummonnerInActiveMatch(self):
         result = dict()

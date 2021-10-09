@@ -60,6 +60,7 @@ class Stats(models.Model):
     level = models.IntegerField(default=0)
     totalDamage = models.IntegerField(default=0)
     grade = models.FloatField(default=0)
+    gradeString = models.TextField(default="")
 
 class Match(models.Model):
     matchId = models.TextField(primary_key=True)
