@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 from datetime import datetime
 from math import ceil
+from time import sleep
 
 from riotwatcher import LolWatcher, ApiError, Handlers
 
@@ -14,12 +15,7 @@ class LolSummoner():
     max = 40
     count = 50
     founds = None
-    regionByregion = {
-        "euw1": "EUROPE",
-        "eun1": "EUROPE",
-        "na1": "AMERICAS",
-        "kr": "ASIA",
-    }
+
 
     def __init__(self, summonerName=None, region=None, platform=None, gameType=None):
         try:
@@ -39,6 +35,8 @@ class LolSummoner():
                         self.lol_watcher = LolWatcher(self.apiKey, default_match_v5=True)
 
                         self.summoner = self.createOrGetSummoner(summonerName)
+                        self.summonerName = self.summoner.summonerName
+
                         try:
 
                             self.matches = Match.objects.filter(participantStats__summoner=self.summoner)
@@ -80,8 +78,16 @@ class LolSummoner():
             for match in self.lol_watcher.match_v5.matchlist_by_puuid(self.region, self.summoner.summonerId,
                                                                       start=start, count=self.count):
                 if match not in self.matchIds:
+                    try:
+                        rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
+                    except:
+                        sleep(5)
+                        try:
+                            rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
 
-                    rMatch = self.lol_watcher.match_v5.by_id(region=self.region, match_id=match)
+                        except:
+                            sleep(5)
+                            continue
                     duration = rMatch['info']['gameDuration']
                     if duration > 100000:
                         duration = duration / 1000
