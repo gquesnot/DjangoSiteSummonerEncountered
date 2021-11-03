@@ -16,7 +16,6 @@ class LolSummoner():
     count = 50
     founds = None
 
-
     def __init__(self, summonerName=None, region=None, platform=None, gameType=None):
         try:
             self.region = region
@@ -117,19 +116,19 @@ class LolSummoner():
                         assists = participant['assists']
                         durationM = round(duration / 60)
 
-                        if durationM == 0:
-                            grade = 0.5
-                            gradeString = ""
-                        else:
+                        # if durationM == 0:
+                        #     grade = 0.5
+                        #     gradeString = ""
+                        # else:
 
-                            grade = 0.336 - (1.437 * (deaths / durationM)) + (0.000117 * (gold / durationM)) + (
-                                    0.443 * ((kills + assists) / durationM)) + (0.264 * (level / durationM)) + (
-                                            0.000013 * (totalDamage / durationM))
-                            gradeString = f"=> 0.336 - ( 1.437 * (deaths / gameDurationInMinute)  + (0.000117 * (golds / gameDurationInMinute)) + (0.443 * ((kills + assists) / gameDurationInMinute)) + (0.264 * (levels / gameDurationInMinute)) + (0.000013 * (totalDamages / gameDurationInMinute)))<br>" + \
-                                          f"=> 0.336 - ( 1.437 * ({deaths} / {durationM})  + (0.000117 * ({gold} / {durationM})) + (0.443 * (({kills} + {assists}) / {durationM})) + (0.264 * ({level} / {durationM})) + (0.000013 * ({totalDamage} / {durationM})))<br>" + \
-                                          f"=> 0.336 - {round(1.437 * (deaths / durationM), 5)}  + {round(0.000117 * (gold / durationM),5)} + {round(0.443 * ((kills + assists) / durationM),5)} + {round(0.264 * (level / durationM),5)} + {round(0.000013 * (totalDamage / durationM),5)}<br>" +\
-                                          f"=> {grade}<br>"
-
+                        # grade = 0.336 - (1.437 * (deaths / durationM)) + (0.000117 * (gold / durationM)) + (
+                        #         0.443 * ((kills + assists) / durationM)) + (0.264 * (level / durationM)) + (
+                        #                 0.000013 * (totalDamage / durationM))
+                        # gradeString = f"=> 0.336 - ( 1.437 * (deaths / gameDurationInMinute)  + (0.000117 * (golds / gameDurationInMinute)) + (0.443 * ((kills + assists) / gameDurationInMinute)) + (0.264 * (levels / gameDurationInMinute)) + (0.000013 * (totalDamages / gameDurationInMinute)))<br>" + \
+                        #               f"=> 0.336 - ( 1.437 * ({deaths} / {durationM})  + (0.000117 * ({gold} / {durationM})) + (0.443 * (({kills} + {assists}) / {durationM})) + (0.264 * ({level} / {durationM})) + (0.000013 * ({totalDamage} / {durationM})))<br>" + \
+                        #               f"=> 0.336 - {round(1.437 * (deaths / durationM), 5)}  + {round(0.000117 * (gold / durationM),5)} + {round(0.443 * ((kills + assists) / durationM),5)} + {round(0.264 * (level / durationM),5)} + {round(0.000013 * (totalDamage / durationM),5)}<br>" +\
+                        #               f"=> {grade}<br>"
+                        grade = (kills + assists) / deaths if deaths != 0 else kills + assists
                         grade = round(grade, 2)
                         statsModel = Stats(
                             summoner=summoner,
@@ -142,7 +141,7 @@ class LolSummoner():
                             level=level,
                             totalDamage=totalDamage,
                             grade=grade,
-                            gradeString = gradeString
+                            gradeString=""
                         )
                         statsModel.save()
                         matchModel.participantStats.add(statsModel)
@@ -191,8 +190,8 @@ class LolSummoner():
                             "mode": match.queue,
                             "time": ddate.strftime("%d-%m-%Y %H:%M"),
                             "win": myStats.win,
-                            "myGrade": round(myStats.grade * 10, 2),
-                            "grade": round(stats.grade * 10, 2),
+                            "myGrade": myStats.grade,
+                            "grade": stats.grade,
                             "gradeString": stats.gradeString,
                             "myGradeString": myStats.gradeString,
                             "vs": myStats.win != stats.win,
@@ -210,8 +209,8 @@ class LolSummoner():
                             res[stats.summoner.summonerName]['found'] += 1
                             res[stats.summoner.summonerName]['matches'].append(tmpRes)
                 idx += 1
-            globalGrade = round((globalGrade / len(self.matches)) * 10, 2)
-            res = dict(sorted(res.items(), key=lambda item: item[1]['found'], reverse=True))
+            globalGrade = round((globalGrade / len(self.matches)), 2)
+            res = dict(sorted(res.items(), key=lambda item: item[1]["matches"][0]['lastSeen'], reverse=False))
             for k, v in res.items():
                 tmpGrade = 0
                 myTmpGrade = 0
@@ -222,8 +221,15 @@ class LolSummoner():
                 res[k]['grade'] = round(tmpGrade / tmpLen, 2)
                 res[k]['myGrade'] = round(myTmpGrade / tmpLen, 2)
 
-            self.founds = res
-            return globalGrade, res
+            i = 0
+            rres = dict()
+            for k, v in res.items():
+                if i == 50:
+                    break
+                rres[k] = v
+                i += 1
+            self.founds = rres
+            return globalGrade, rres
         return 0, []
 
     def findSummonnerInActiveMatch(self):

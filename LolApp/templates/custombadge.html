@@ -1,13 +1,13 @@
 
 <span style="line-height: 30px; min-width: 50px;" class="badge
     {% if grade <= 3 %}
-badge-danger
-{% elif grade <= 4.5 %}
-badge-warning
-{% elif grade >= 7 %}
-badge-success
-{% elif grade >= 5.5 %}
+badge-secondary
+{% elif grade <= 4 %}
+badge-info
+{% elif grade <= 5 %}
 badge-primary
+{% elif grade >= 5 %}
+badge-danger
 {% else %}
 badge-light
 {% endif %}

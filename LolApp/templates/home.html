@@ -22,9 +22,13 @@
                         <div class="modal-header d-flex flex-column">
                             <div class="w-100">
                                 <div class="d-flex">
-                                    <div style="width: 95%">
+                                    <div style="width: 95%" class="d-flex">
 
-                                        <h5 class="modal-title pb-2">Grade Chart </h5>
+                                        <h5 class="modal-title pb-2 mr-5">Kda Chart </h5>
+                                        <div class="badge badge-info class = w-10">
+                                    <h5>Colors based on op.gg  <a style="color: white;border-bottom: 1px solid black;text-decoration: none;" href="https://opgg.helpscoutdocs.com/article/306-hows-kda-calculated">see</a></h5>
+
+                            </div>
                                     </div>
                                     <div style="width: 5%">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -33,49 +37,7 @@
                                     </div>
                                 </div>
 
-                                <table class="table tableShow">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class=text-center" style="color:white">1</th>
-                                        <th scope="col" class="text-center">0</th>
-                                        <th scope="col" class="text-center">1</th>
-                                        <th scope="col" class="text-center">2</th>
-                                        <th scope="col" class="text-center">3</th>
-                                        <th scope="col" class="text-center">4</th>
-                                        <th scope="col" class="text-center">5</th>
-                                        <th scope="col" class="text-center">6</th>
-                                        <th scope="col" class="text-center">7</th>
-                                        <th scope="col" class="text-center">8</th>
-                                        <th scope="col" class="text-center">9</th>
-                                        <th scope="col" class="text-center">10</th>
-                                        <th scope="col" class="text-center" style="color:white">1</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td class="bg-danger"></td>
-                                        <td class="bg-danger"></td>
-                                        <td class="bg-danger"></td>
-                                        <td class="bg-danger"></td>
-                                        <td class="bg-warning"></td>
-                                        <td class="bg-warning"></td>
-                                        <td></td>
-                                        <td class="bg-primary"></td>
-                                        <td class="bg-primary"></td>
-                                        <td class="bg-success"></td>
-                                        <td class="bg-success"></td>
-                                        <td class="bg-success"></td>
-                                        <td class="bg-success"></td>
-                                    </tr>
-                                    <tr>
 
-                                        <td colspan="4" class="text-center">Out Of The Game</td>
-                                        <td colspan="2" class="text-center">Bad Game</td>
-                                        <td colspan="1" class="text-center">Average</td>
-                                        <td colspan="2" class="text-center">Good Game</td>
-                                        <td colspan="4" class="text-center">Carry/Hard Carry</td>
-                                    </tr>
-                                </table>
                             </div>
                             <div class="d-flex w-100 justify-content-between mt-3">
 
@@ -90,14 +52,14 @@
                                 </div>
 
                                 <div style="width: 19.50%" class="d-flex justify-content-center flex-column">
-                                    <div class="text-center">Your Grade:</div>
+                                    <div class="text-center">Your Kda:</div>
                                     <div class="text-center">Total:
                                         {% include 'custombadge.html' with grade=gGrade %}</div>
 
 
                                 </div>
                                 <div style="width: 19.5%" class="d-flex justify-content-center">
-                                    <p style="font-size: 20px">Other Player Grade</p>
+                                    <p style="font-size: 20px">Other Player Kda</p>
 
                                 </div>
                                 <div style="width: 19.5%" class="d-flex justify-content-center h-50">
@@ -157,8 +119,8 @@
 
                                         <th>myChamp</th>
                                         <th>myScore</th>
-                                        <th>myGrade</th>
-                                        <th>otherGrade</th>
+                                        <th>my Kda</th>
+                                        <th>other Kda</th>
                                         <th>otherScore</th>
                                         <th>otherChamp</th>
                                     </tr>
@@ -291,14 +253,14 @@
 
             </div>
 
-            <div class="w-100 h-50 d-flex justify-content-between">
+            <div class="w-100 h-50 d-flex justify-content-center">
 
-                <div class="mr-1 mt-5" style="width: 45%">
-                    <a class="btn btn-primary w-100"
-                       href="https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb"
-                       target="_blank">informations about grade</a>
-                </div>
-                <button class="btn btn-success ml-1 mt-5" type="submit" style="width: 45%">Search</button>
+{#                <div class="mr-1 mt-5" style="width: 45%">#}
+{#                    <a class="btn btn-primary w-100"#}
+{#                       href="https://maddcog.medium.com/measure-league-of-legends-performance-with-this-game-grade-778c2fe832cb"#}
+{#                       target="_blank">informations about grade</a>#}
+{#                </div>#}
+                <button class="btn btn-success ml-1 mt-2" type="submit" style="width: 45%">Search</button>
 
 
             </div>
