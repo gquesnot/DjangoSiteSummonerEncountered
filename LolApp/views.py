@@ -9,8 +9,9 @@ from LolApp.util.LolSummonerClass import LolSummoner
 import requests
 
 
-def updateChamp():
-    champs = requests.get("http://ddragon.leagueoflegends.com/cdn/11.20.1/data/en_US/champion.json").json()['data']
+def updateChamp(version):
+
+    champs = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion.json").json()['data']
     for champName, champ in champs.items():
         champId = int(champ['key'])
         try:
@@ -65,7 +66,7 @@ def updateData(request):
     version = requests.get("https://ddragon.leagueoflegends.com/api/versions.json").json()[0]
     print(version, config['version'])
     if version != config['version']:
-        updateChamp()
+        updateChamp(version)
         updateGameMode()
         updateGameQueue()
         updateGameMap()
